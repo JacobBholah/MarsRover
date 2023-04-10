@@ -15,6 +15,13 @@ namespace MarsRover
         public char Direction;
 
         ///constructors/////
+        public Rover(string name, int x, int y, char direction)
+        {
+            this.Name = name;
+            this.X = x;
+            this.Y = y;
+            this.Direction = direction;
+        }
         public Rover(int x, int y, char direction)
         {
             this.X = x;
@@ -159,35 +166,37 @@ namespace MarsRover
         public Rover validateRoverMovementCommand(Rover rover, Plateau plateau)
         {
             Console.WriteLine($"Please provide the movement command for {rover.getName()}");
-            string rover1Movementcommand = Console.ReadLine();
+            string roverMovementcommand = Console.ReadLine();
+            Rover validateRover = new Rover(rover.getName(),rover.getX(), rover.getY(), rover.getDirection());
             try
             {
-                foreach (char i in rover1Movementcommand)
+                foreach (char i in roverMovementcommand)
                 {
                     switch (i)
                     {
                         case 'L':
-                            rover.rotateL(rover.getDirection());
+                            validateRover.rotateL(validateRover.getDirection());
                             break;
 
                         case 'R':
-                            rover.rotateR(rover.getDirection());
+                            validateRover.rotateR(validateRover.getDirection());
                             break;
 
                         case 'M':
-                            rover.moveForward(rover.getDirection());
+                            validateRover.moveForward(validateRover.getDirection());
                             break;
 
                         case ' ':
                             break;
+
                         default:
                             //WHY DOESNT THIS ERROR MESSAGE APPEAR? DOES IT NOT GO TO CONSOLE?
                             throw new InvalidDataException($"Invalid format of {rover.getName()} movement command. Only the movement commands L,R and M are accepted");
                     }
-                    if (rover.getX() > plateau.getLength() || rover.getX() < 0 || rover.getY() > plateau.getWidth() || rover.getY() < 0)
+                    if (validateRover.getX() > plateau.getLength() || validateRover.getX() < 0 || validateRover.getY() > plateau.getWidth() || validateRover.getY() < 0)
                     {
                         Console.WriteLine($"{rover.getName()} movement command exceeds the bounds of the Plateau");
-                        throw new InvalidOperationException($"Rover must not exceed the bounds of the set {plateau.getLength()}by{plateau.getWidth()} Plateau");
+                        throw new InvalidOperationException($"Rover must not exceed the bounds of the set {plateau.getLength()} by {plateau.getWidth()} Plateau");
                     }
                 }
             }
@@ -196,7 +205,13 @@ namespace MarsRover
                 Console.WriteLine($"Invalid format of { rover.getName()} movement command. Only the movement commands L,R and M are accepted");
                 rover.validateRoverMovementCommand(rover,plateau);
             }
-            return rover;
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine($"Rover must not exceed the bounds of the set {plateau.getLength()} by {plateau.getWidth()} Plateau");
+                Console.WriteLine($"{rover.getName()} is currently at {rover.getX()} {rover.getY()} {rover.getDirection()} ");
+                rover.validateRoverMovementCommand(rover, plateau);
+            }
+            return validateRover;
         }
 
         public static void roverDeployment(List<Rover> data)
