@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace MarsRover
@@ -46,8 +47,10 @@ namespace MarsRover
                 //should I use setters and getter here instead????
                 //testPlataeu.setLength(upperRightCoords[0]);
                 //testPlataeu.setWidth(upperRightCoords[2]);
+                plateau.setLength(int.Parse(upperRightCoords[0].ToString()));
+                plateau.setWidth(int.Parse(upperRightCoords[2].ToString()));
 
-                plateau = new Plateau(upperRightCoords[0], upperRightCoords[2]);
+                //plateau = new Plateau(upperRightCoords[0], upperRightCoords[2]);
             }
 
             catch (InvalidCastException)
@@ -56,6 +59,18 @@ namespace MarsRover
                 throw new InvalidCastException(@"only x and y coordinates for plateau should be provided");
             }
             return plateau;
+        }
+        public static void savePlateauData(Plateau plateau)
+        {
+            var json = JsonConvert.SerializeObject(plateau);
+            File.WriteAllText("./PlateauData.json", json);
+        }
+
+        public static Plateau readPlateauData()
+        {
+            string currentData = File.ReadAllText("./PlateauData.json");
+            Plateau data = JsonConvert.DeserializeObject<Plateau>(currentData);
+            return data;
         }
     }
 }

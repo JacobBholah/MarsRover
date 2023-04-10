@@ -214,6 +214,7 @@ namespace MarsRover
                 //////set dimensions of the plateau
                 Plateau plateau = new Plateau();
                 plateau = plateau.setPlateauDimensions(plateau);
+                Plateau.savePlateauData(plateau);
 
                 for (int i = 0; i < int.Parse(numOfRovers.ToString()); i++)
 
@@ -353,9 +354,31 @@ namespace MarsRover
                 else
                 {
                     //////set dimensions of the plateau
-                    ///// set to load plateasu data
+                    ///// set to load plateasu data                        
                     Plateau plateau = new Plateau();
-                    plateau = plateau.setPlateauDimensions(plateau);
+
+                    try
+                    {
+                        plateau = Plateau.readPlateauData();
+                        Console.WriteLine($"Use current Upper right coordinates for Plateau of {int.Parse(plateau.getLength().ToString())} {plateau.getLength()} or provide new coordinates. Type C for current or N for new");
+                        string currentORnewCoords = Console.ReadLine();
+                        switch (currentORnewCoords)
+                        {
+                            case "C":
+                                break;
+
+                            case "N":
+                                plateau = plateau.setPlateauDimensions(plateau);
+                                Plateau.savePlateauData(plateau);
+                                break;
+                        }
+                    }
+                    catch (Exception e) when (e is FileNotFoundException || e is NullReferenceException)
+                    {
+                       Console.WriteLine("No previous Plateau coordinates available");
+                       plateau = plateau.setPlateauDimensions(plateau);
+                        Plateau.savePlateauData(plateau);
+                    }
 
                     Rover.currentPositionOrNewQuestion(data, roverPosition, plateau);
                 }
@@ -375,7 +398,29 @@ namespace MarsRover
                 //////set dimensions of the plateau
                 /////change to load previous plateau data
                 Plateau plateau = new Plateau();
-                plateau = plateau.setPlateauDimensions(plateau);
+                try
+                {
+                 plateau = Plateau.readPlateauData();
+                Console.WriteLine($"Use current Upper right coordinates for Plateau of {plateau.getLength()} {plateau.getLength()} or provide new coordinates. Type C for current or N for new");
+                string currentORnewCoords = Console.ReadLine();
+                switch (currentORnewCoords)
+                {
+                    case "C":
+                        break;
+
+                    case "N":
+                        plateau = plateau.setPlateauDimensions(plateau);
+                        Plateau.savePlateauData(plateau);
+                        break;
+                }
+
+                }
+                catch (Exception e) when (e is FileNotFoundException || e is NullReferenceException)
+                {
+                    Console.WriteLine("No previous Plateau coordinates available");
+                    plateau = plateau.setPlateauDimensions(plateau);
+                    Plateau.savePlateauData(plateau);
+                }
 
                 for (int i = 0; i < int.Parse(numOfRovers.ToString()); i++)
                 {
