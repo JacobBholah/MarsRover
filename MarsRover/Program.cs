@@ -14,11 +14,11 @@ namespace MarsRover
             {
                 try
                 {
-                    Rover[] data = Rover.readRoverData();
-                    //List<Rover> data = new List<Rover>();
-                    Console.WriteLine($"There is currently {data.Length} Rover/s deployed");
+                    //Rover[] data = Rover.readRoverData();
+                    List<Rover> data = Rover.readRoverData();
+                    Console.WriteLine($"There is currently {data.Count} Rover/s deployed");
 
-                    for (int i = 0; i < data.Length; i++)
+                    for (int i = 0; i < data.Count; i++)
                     {
                         Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
                     }
@@ -32,7 +32,7 @@ namespace MarsRover
                 catch (Exception e) when (e is FileNotFoundException || e is NullReferenceException)
                 {
                     Console.WriteLine("No Previous Data being held");
-                    Rover[] data = new Rover[0];
+                    List<Rover> data = new List<Rover>();
                     Rover.roverDeployment(data);
                     x = Rover.repeatProgram(x);
                 }

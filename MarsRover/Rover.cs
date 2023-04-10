@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -191,7 +192,7 @@ namespace MarsRover
             return rover;
         }
 
-        public static void roverDeployment(Rover[] data)
+        public static void roverDeployment(List<Rover> data)
         {
             Console.WriteLine("How many Rovers will you be deploying");
             string numOfRovers = Console.ReadLine();
@@ -201,13 +202,13 @@ namespace MarsRover
             }
             else
             {
-                data = new Rover[int.Parse(numOfRovers.ToString())];
+                //data = new Rover[int.Parse(numOfRovers.ToString())];
 
                 //////set dimensions of the plateau
                 Plateau plateau = new Plateau();
                 plateau = plateau.setPlateauDimensions(plateau);
 
-                for (int i = 0; i < data.Length; i++)
+                for (int i = 0; i < data.Count; i++)
                 {
                     Rover rover = new Rover($"Rover{i + 1}");
                     /////set the position of rovers
@@ -229,7 +230,7 @@ namespace MarsRover
         }
 
         //rename this method to something better
-        public static void adjustRoversQuestion(Rover[] data)
+        public static void adjustRoversQuestion(List<Rover> data)
         {
             Console.WriteLine($"Would you like to adjust any of these Rovers? Y or N or type ! to see list of Rovers");
             string roverAdjustment = Console.ReadLine();
@@ -244,7 +245,7 @@ namespace MarsRover
                     break;
 
                 case "!":
-                    for (int i = 0; i < data.Length; i++)
+                    for (int i = 0; i < data.Count; i++)
                     {
                         Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
                     }
@@ -258,7 +259,7 @@ namespace MarsRover
         }
 
         //rename this method to something better
-        public static void additionalRoversQuestion(Rover[] data)
+        public static void additionalRoversQuestion(List<Rover> data)
         {
             Console.WriteLine($"Would you like to deploy some additional Rovers?");
             string deployMoreRovers = Console.ReadLine();
@@ -279,7 +280,7 @@ namespace MarsRover
             }
         }
 
-        public static void currentPositionOrNewQuestion(Rover[] data, int roverPosition,Plateau plateau)
+        public static void currentPositionOrNewQuestion(List<Rover> data, int roverPosition, Plateau plateau)
         {
             Console.WriteLine($"Use current position of {data[roverPosition].Name} at {data[roverPosition].X} {data[roverPosition].Y} facing {data[roverPosition].Direction} or provied a new starting position? Please Type C for current position or N for new position");
             string newOrOldPosition = Console.ReadLine();
@@ -317,13 +318,13 @@ namespace MarsRover
             }
         }
 
-            public static void roverAdjustment(Rover[] data)
+        public static void roverAdjustment(List<Rover> data)
         {
             Console.WriteLine($"Which Rover would you like to adjust? Type ! to see list of available Rovers");
             string roverName = Console.ReadLine();
             if (roverName == "!")
             {
-                for (int i = 0; i < data.Length; i++)
+                for (int i = 0; i < data.Count; i++)
                 {
                     Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
                 }
@@ -331,12 +332,11 @@ namespace MarsRover
             }
             else
             {
-               
-                int roverPosition = Array.FindIndex(data, x => x.Name == roverName);
-                if (roverPosition==-1)
+                int roverPosition = data.FindIndex(x => x.Name == roverName);
+                if (roverPosition == -1)
                 {
                     Console.WriteLine("The provided Rover name does not exist. Current available Rovers are as follows");
-                    for (int i = 0; i < data.Length; i++)
+                    for (int i = 0; i < data.Count; i++)
                     {
                         Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
                     }
@@ -345,16 +345,16 @@ namespace MarsRover
                 else
                 {
                     //////set dimensions of the plateau
-                ///// set to load plateasu data
-                Plateau plateau = new Plateau();
-                plateau = plateau.setPlateauDimensions(plateau);
+                    ///// set to load plateasu data
+                    Plateau plateau = new Plateau();
+                    plateau = plateau.setPlateauDimensions(plateau);
 
-                Rover.currentPositionOrNewQuestion(data, roverPosition, plateau);
+                    Rover.currentPositionOrNewQuestion(data, roverPosition, plateau);
                 }
             }
         }
 
-        public static void additionalRoverDeployment(Rover[] data)
+        public static void additionalRoverDeployment(List<Rover> data)
         {
             Console.WriteLine("How many Rovers will you be deploying");
             string numOfRovers = Console.ReadLine();
@@ -369,18 +369,19 @@ namespace MarsRover
                 Plateau plateau = new Plateau();
                 plateau = plateau.setPlateauDimensions(plateau);
 
-                for (int i = 0 + data.Length; i < data.Length + int.Parse(numOfRovers.ToString()); i++)
+                for (int i = 0; i < int.Parse(numOfRovers.ToString()); i++)
                 {
-                    Rover rover = new Rover($"Rover{i + 1}");
+                    int j = data.Count;
+                    Rover rover = new Rover($"Rover{1 + j}");
                     /////set the position of rovers
                     rover = rover.setRoverPosition(rover);
                     //push the data into correct array spot
-                    data[i] = rover;
+                    data.Insert(j, rover);
                     Rover.saveRoverData(data);
                     ////movement of rover
                     rover = rover.validateRoverMovementCommand(rover, plateau);
                     //push the rover data into the array
-                    data[i] = rover;
+                    data[j] = rover;
                     Rover.saveRoverData(data);
 
                     Console.WriteLine($"Executing movement of {rover.getName()}");
@@ -410,16 +411,16 @@ namespace MarsRover
             return x;
         }
 
-        public static void saveRoverData(Array data)
+        public static void saveRoverData(List<Rover> data)
         {
             var json = JsonConvert.SerializeObject(data);
             File.WriteAllText("./RoverData.json", json);
         }
 
-        public static Rover[] readRoverData()
+        public static List<Rover> readRoverData()
         {
             string currentData = File.ReadAllText("./RoverData.json");
-            Rover[] data = JsonConvert.DeserializeObject<Rover[]>(currentData);
+            List<Rover> data = JsonConvert.DeserializeObject<List<Rover>>(currentData);
             return data;
         }
     }
