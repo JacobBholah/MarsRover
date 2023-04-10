@@ -132,9 +132,14 @@ namespace MarsRover
             Console.WriteLine($"Please provide the starting point for {rover.getName()}");
             string roverStartingPos = Console.ReadLine();
 
-            if (roverStartingPos.Length > 5)
-                throw new InvalidDataException("Rover1 starting position string is too long");
-            try
+            if (roverStartingPos.Length != 5)
+            {
+                Console.WriteLine("Rover1 starting position provided is invalid, it should be in the format of x y Direction i.e. 1 2 N ");
+                rover.setRoverPosition(rover);
+            }
+            else
+            {
+                try
             {
                 //should I use setters and getter here instead????
                 rover.setX(int.Parse(roverStartingPos[0].ToString()));
@@ -143,12 +148,12 @@ namespace MarsRover
                 //rover1 = new Rover(rover1StartingPos[0], rover1StartingPos[2], rover1StartingPos[4]);
             }
 
-            catch (InvalidCastException)
+            catch (FormatException)
             {
-                Console.WriteLine("Invalid format of Rover1 starting position");
-                throw new InvalidCastException(@"only x and y coordinates and direction(N,S,E,W) for the Rover must be provided");
+                Console.WriteLine("Invalid format of Rover1 starting position. Only x and y coordinates and direction(N,S,E,W) for the Rover must be provided");
+                rover.setRoverPosition(rover);
             }
-
+            }
             return rover;
         }
         public Rover validateRoverMovementCommand(Rover rover, Plateau plateau)
@@ -175,6 +180,9 @@ namespace MarsRover
 
                         case ' ':
                             break;
+                        default:
+                            throw new InvalidDataException($"Invalid format of {rover.getName()} movement command. Only the movement commands L,R and M are accepted");
+                            break;
                     }
                     if (rover.getX() > plateau.getLength() || rover.getX() < 0 || rover.getY() > plateau.getWidth() || rover.getY() < 0)
                     {
@@ -183,11 +191,9 @@ namespace MarsRover
                     }
                 }
             }
-
             catch (InvalidDataException)
             {
-                Console.WriteLine($"Invalid format of {rover.getName()} movement command");
-                throw new InvalidDataException(@"Only the movement commands L,R and M are accepted");
+                rover.validateRoverMovementCommand(rover,plateau);
             }
             return rover;
         }
@@ -221,7 +227,6 @@ namespace MarsRover
                     //push the rover data into the array
                     data[i] = rover;
                     Rover.saveRoverData(data);
-
 
                     Console.WriteLine($"Executing movement of {rover.getName()}");
                     Console.WriteLine($"new position of {rover.getName()} is {rover.getX()} {rover.getY()} {rover.getDirection()}");

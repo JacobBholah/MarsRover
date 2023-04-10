@@ -14,7 +14,6 @@ namespace MarsRover
             {
                 try
                 {
-                    //Rover[] data = Rover.readRoverData();
                     List<Rover> data = Rover.readRoverData();
                     Console.WriteLine($"There is currently {data.Count} Rover/s deployed");
 
@@ -24,8 +23,6 @@ namespace MarsRover
                     }
                     Rover.adjustRoversQuestion(data);
                     Rover.additionalRoversQuestion(data);
-
-                    //Rover.roverDeployment(data);
                     x = Rover.repeatProgram(x);
                 }
 
