@@ -64,7 +64,7 @@ namespace MarsRover
 
         public void rotateL(char direction)
         {
-            switch(direction)
+            switch (direction)
             {
                 case 'N':
                     setDirection('W');
@@ -110,19 +110,19 @@ namespace MarsRover
             switch (direction)
             {
                 case 'N':
-                    setY(getY()+1);
+                    setY(getY() + 1);
                     break;
 
                 case 'E':
-                    setX(getX()+1);
+                    setX(getX() + 1);
                     break;
 
                 case 'S':
-                    setY(getY()-1);
+                    setY(getY() - 1);
                     break;
 
                 case 'W':
-                    setX(getX()-1);
+                    setX(getX() - 1);
                     break;
             }
         }
@@ -150,7 +150,7 @@ namespace MarsRover
 
             return rover;
         }
-        public Rover validateRoverMovementCommand(Rover rover,Plateau plateau)
+        public Rover validateRoverMovementCommand(Rover rover, Plateau plateau)
         {
             Console.WriteLine($"Please provide the movement command for {rover.getName()}");
             string rover1Movementcommand = Console.ReadLine();
@@ -228,6 +228,167 @@ namespace MarsRover
             }
         }
 
+        //rename this method to something better
+        public static void adjustRoversQuestion(Rover[] data)
+        {
+            Console.WriteLine($"Would you like to adjust any of these Rovers? Y or N or type ! to see list of Rovers");
+            string roverAdjustment = Console.ReadLine();
+            switch (roverAdjustment)
+            {
+                case "Y":
+                    Rover.roverAdjustment(data);
+                    break;
+
+                case "N":
+                    Console.WriteLine($"No adjustments to be made to currently deployed Rovers");
+                    break;
+
+                case "!":
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
+                    }
+                    Rover.adjustRoversQuestion(data);
+                    break;
+                default:
+                    Console.WriteLine($"Please type Y for yes, N for no or ! to see available list of Rovers");
+                    Rover.adjustRoversQuestion(data);
+                    break;
+            }
+        }
+
+        //rename this method to something better
+        public static void additionalRoversQuestion(Rover[] data)
+        {
+            Console.WriteLine($"Would you like to deploy some additional Rovers?");
+            string deployMoreRovers = Console.ReadLine();
+            switch (deployMoreRovers)
+            {
+                case "Y":
+                    Rover.additionalRoverDeployment(data);
+                    break;
+
+                case "N":
+                    Console.WriteLine($"No additional Rovers to be deployed");
+                    break;
+
+                default:
+                    Console.WriteLine($"Please type Y for yes or N for no");
+                    Rover.additionalRoversQuestion(data);
+                    break;
+            }
+        }
+
+        public static void currentPositionOrNewQuestion(Rover[] data, int roverPosition,Plateau plateau)
+        {
+            Console.WriteLine($"Use current position of {data[roverPosition].Name} at {data[roverPosition].X} {data[roverPosition].Y} facing {data[roverPosition].Direction} or provied a new starting position? Please Type C for current position or N for new position");
+            string newOrOldPosition = Console.ReadLine();
+            switch (newOrOldPosition)
+            {
+                case "C":
+                    Rover existingPosRover = data[roverPosition];
+                    existingPosRover = existingPosRover.validateRoverMovementCommand(existingPosRover, plateau);
+                    //push the rover data into the array
+                    data[roverPosition] = existingPosRover;
+                    Rover.saveRoverData(data);
+                    Console.WriteLine($"Executing movement of {existingPosRover.getName()}");
+                    Console.WriteLine($"new position of {existingPosRover.getName()} is {existingPosRover.getX()} {existingPosRover.getY()} {existingPosRover.getDirection()}");
+                    break;
+
+                case "N":
+                    Rover newPosRover = data[roverPosition];
+                    /////set the position of rovers
+                    newPosRover = newPosRover.setRoverPosition(newPosRover);
+                    //push the data into correct array spot
+                    data[roverPosition] = newPosRover;
+                    Rover.saveRoverData(data);
+                    newPosRover = newPosRover.validateRoverMovementCommand(newPosRover, plateau);
+                    //push the rover data into the array
+                    data[roverPosition] = newPosRover;
+                    Rover.saveRoverData(data);
+                    Console.WriteLine($"Executing movement of {newPosRover.getName()}");
+                    Console.WriteLine($"new position of {newPosRover.getName()} is {newPosRover.getX()} {newPosRover.getY()} {newPosRover.getDirection()}");
+                    break;
+
+                default:
+                    Console.WriteLine("Unaccepted input! Please type either C to use current position or N to provide a new position");
+                    Rover.currentPositionOrNewQuestion(data, roverPosition, plateau);
+                    break;
+            }
+        }
+
+            public static void roverAdjustment(Rover[] data)
+        {
+            Console.WriteLine($"Which Rover would you like to adjust? Type ! to see list of available Rovers");
+            string roverName = Console.ReadLine();
+            if (roverName == "!")
+            {
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
+                }
+                Rover.roverAdjustment(data);
+            }
+            else
+            {
+               
+                int roverPosition = Array.FindIndex(data, x => x.Name == roverName);
+                if (roverPosition==-1)
+                {
+                    Console.WriteLine("The provided Rover name does not exist. Current available Rovers are as follows");
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
+                    }
+                    Rover.roverAdjustment(data);
+                }
+                else
+                {
+                    //////set dimensions of the plateau
+                ///// set to load plateasu data
+                Plateau plateau = new Plateau();
+                plateau = plateau.setPlateauDimensions(plateau);
+
+                Rover.currentPositionOrNewQuestion(data, roverPosition, plateau);
+                }
+            }
+        }
+
+        public static void additionalRoverDeployment(Rover[] data)
+        {
+            Console.WriteLine("How many Rovers will you be deploying");
+            string numOfRovers = Console.ReadLine();
+            if (numOfRovers == "0")
+            {
+                Console.WriteLine("No Additional Rovers to be deployed");
+            }
+            else
+            {
+                //////set dimensions of the plateau
+                /////change to load previous plateau data
+                Plateau plateau = new Plateau();
+                plateau = plateau.setPlateauDimensions(plateau);
+
+                for (int i = 0 + data.Length; i < data.Length + int.Parse(numOfRovers.ToString()); i++)
+                {
+                    Rover rover = new Rover($"Rover{i + 1}");
+                    /////set the position of rovers
+                    rover = rover.setRoverPosition(rover);
+                    //push the data into correct array spot
+                    data[i] = rover;
+                    Rover.saveRoverData(data);
+                    ////movement of rover
+                    rover = rover.validateRoverMovementCommand(rover, plateau);
+                    //push the rover data into the array
+                    data[i] = rover;
+                    Rover.saveRoverData(data);
+
+                    Console.WriteLine($"Executing movement of {rover.getName()}");
+                    Console.WriteLine($"new position of {rover.getName()} is {rover.getX()} {rover.getY()} {rover.getDirection()}");
+                }
+            }
+        }
+
         public static bool repeatProgram(bool x)
         {
             Console.WriteLine("Would you like to repeat the program? Y or N");
@@ -235,16 +396,16 @@ namespace MarsRover
             switch (repeatProgram)
             {
                 case "Y":
-                    x=true;
+                    x = true;
                     break;
 
                 case "N":
-                    x=false;
+                    x = false;
                     break;
                 default:
                     Console.WriteLine("Accept answers are Y for yes and N for no");
                     Rover.repeatProgram(true);
-                   break;
+                    break;
             }
             return x;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MarsRover
@@ -14,14 +15,17 @@ namespace MarsRover
                 try
                 {
                     Rover[] data = Rover.readRoverData();
+                    //List<Rover> data = new List<Rover>();
                     Console.WriteLine($"There is currently {data.Length} Rover/s deployed");
 
                     for (int i = 0; i < data.Length; i++)
                     {
                         Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
                     }
+                    Rover.adjustRoversQuestion(data);
+                    Rover.additionalRoversQuestion(data);
 
-                    Rover.roverDeployment(data);
+                    //Rover.roverDeployment(data);
                     x = Rover.repeatProgram(x);
                 }
 
