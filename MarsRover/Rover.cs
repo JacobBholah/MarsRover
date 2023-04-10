@@ -185,7 +185,6 @@ namespace MarsRover
                         case 'M':
                             validateRover.moveForward(validateRover.getDirection());
                             break;
-
                         case ' ':
                             break;
 
@@ -203,13 +202,13 @@ namespace MarsRover
             catch (InvalidDataException)
             {
                 Console.WriteLine($"Invalid format of { rover.getName()} movement command. Only the movement commands L,R and M are accepted");
-                rover.validateRoverMovementCommand(rover,plateau);
+                return rover.validateRoverMovementCommand(rover,plateau);
             }
             catch (InvalidOperationException)
             {
                 Console.WriteLine($"Rover must not exceed the bounds of the set {plateau.getLength()} by {plateau.getWidth()} Plateau");
                 Console.WriteLine($"{rover.getName()} is currently at {rover.getX()} {rover.getY()} {rover.getDirection()} ");
-                rover.validateRoverMovementCommand(rover, plateau);
+                return rover.validateRoverMovementCommand(rover, plateau);
             }
             return validateRover;
         }
