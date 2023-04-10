@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/MarsRover/bin/Debug/net5.0
+/MarsRover/.vs/MarsRover/v16
+/MarsRover/obj/Debug/net5.0/ref
+/MarsRover/obj/Debug/net5.0
+/MarsRover/obj/Release/net5.0
+/MarsRover/obj/Release/net6.0

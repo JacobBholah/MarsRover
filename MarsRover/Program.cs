@@ -1,33 +1,37 @@
 ﻿using System;
+using System.IO;
 
 namespace MarsRover
 {
     class Program
     {
+        private static bool x = true;
+
         static void Main(string[] args)
         {
-            Console.WriteLine("How many Rovers will you be deploying");
-            string numOfRovers = Console.ReadLine();
-            Rover[] data = new Rover[int.Parse(numOfRovers.ToString())];
-
-            //////set dimensions of the plateau
-            Plateau plateau = new Plateau();
-            plateau=plateau.setPlateauDimensions(plateau);
-
-            for(int i=0; i<data.Length; i++)
+            while (x == true)
             {
-                Rover rover = new Rover($"Rover{i+1}");            
-                /////set the position of rovers
-                rover=rover.setRoverPosition(rover);
-                //push the data into correct array spot
-                data[i] = rover;
-                ////movement of rover
-                rover = rover.validateRoverMovementCommand(rover,plateau);
-                //push the rover data into the array
-                data[i] = rover;
+                try
+                {
+                    Rover[] data = Rover.readRoverData();
+                    Console.WriteLine($"There is currently {data.Length} Rover/s deployed");
 
-                Console.WriteLine($"Executing movement of {rover.getName()}");
-                Console.WriteLine($"new position of {rover.getName()} is {rover.getX()} {rover.getY()} {rover.getDirection()}");
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        Console.WriteLine($"{data[i].Name} is currently positioned at {data[i].X} {data[i].Y} facing {data[i].Direction}");
+                    }
+
+                    Rover.roverDeployment(data);
+                    x = Rover.repeatProgram(x);
+                }
+
+                catch (Exception e) when (e is FileNotFoundException || e is NullReferenceException)
+                {
+                    Console.WriteLine("No Previous Data being held");
+                    Rover[] data = new Rover[0];
+                    Rover.roverDeployment(data);
+                    x = Rover.repeatProgram(x);
+                }
             }
             Console.WriteLine("END OF PROGRAM");
         }

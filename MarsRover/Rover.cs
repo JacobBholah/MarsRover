@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 
@@ -188,6 +189,77 @@ namespace MarsRover
                 throw new InvalidDataException(@"Only the movement commands L,R and M are accepted");
             }
             return rover;
+        }
+
+        public static void roverDeployment(Rover[] data)
+        {
+            Console.WriteLine("How many Rovers will you be deploying");
+            string numOfRovers = Console.ReadLine();
+            if (numOfRovers == "0")
+            {
+                Console.WriteLine("No Rovers to be deployed");
+            }
+            else
+            {
+                data = new Rover[int.Parse(numOfRovers.ToString())];
+
+                //////set dimensions of the plateau
+                Plateau plateau = new Plateau();
+                plateau = plateau.setPlateauDimensions(plateau);
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Rover rover = new Rover($"Rover{i + 1}");
+                    /////set the position of rovers
+                    rover = rover.setRoverPosition(rover);
+                    //push the data into correct array spot
+                    data[i] = rover;
+                    Rover.saveRoverData(data);
+                    ////movement of rover
+                    rover = rover.validateRoverMovementCommand(rover, plateau);
+                    //push the rover data into the array
+                    data[i] = rover;
+                    Rover.saveRoverData(data);
+
+
+                    Console.WriteLine($"Executing movement of {rover.getName()}");
+                    Console.WriteLine($"new position of {rover.getName()} is {rover.getX()} {rover.getY()} {rover.getDirection()}");
+                }
+            }
+        }
+
+        public static bool repeatProgram(bool x)
+        {
+            Console.WriteLine("Would you like to repeat the program? Y or N");
+            string repeatProgram = Console.ReadLine();
+            switch (repeatProgram)
+            {
+                case "Y":
+                    x=true;
+                    break;
+
+                case "N":
+                    x=false;
+                    break;
+                default:
+                    Console.WriteLine("Accept answers are Y for yes and N for no");
+                    Rover.repeatProgram(true);
+                   break;
+            }
+            return x;
+        }
+
+        public static void saveRoverData(Array data)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            File.WriteAllText("./RoverData.json", json);
+        }
+
+        public static Rover[] readRoverData()
+        {
+            string currentData = File.ReadAllText("./RoverData.json");
+            Rover[] data = JsonConvert.DeserializeObject<Rover[]>(currentData);
+            return data;
         }
     }
 }
