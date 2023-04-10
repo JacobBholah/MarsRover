@@ -181,8 +181,8 @@ namespace MarsRover
                         case ' ':
                             break;
                         default:
+                            //WHY DOESNT THIS ERROR MESSAGE APPEAR? DOES IT NOT GO TO CONSOLE?
                             throw new InvalidDataException($"Invalid format of {rover.getName()} movement command. Only the movement commands L,R and M are accepted");
-                            break;
                     }
                     if (rover.getX() > plateau.getLength() || rover.getX() < 0 || rover.getY() > plateau.getWidth() || rover.getY() < 0)
                     {
@@ -193,6 +193,7 @@ namespace MarsRover
             }
             catch (InvalidDataException)
             {
+                Console.WriteLine($"Invalid format of { rover.getName()} movement command. Only the movement commands L,R and M are accepted");
                 rover.validateRoverMovementCommand(rover,plateau);
             }
             return rover;
