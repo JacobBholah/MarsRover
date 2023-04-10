@@ -215,13 +215,15 @@ namespace MarsRover
                 Plateau plateau = new Plateau();
                 plateau = plateau.setPlateauDimensions(plateau);
 
-                for (int i = 0; i < data.Count; i++)
+                for (int i = 0; i < int.Parse(numOfRovers.ToString()); i++)
+
                 {
                     Rover rover = new Rover($"Rover{i + 1}");
                     /////set the position of rovers
                     rover = rover.setRoverPosition(rover);
                     //push the data into correct array spot
-                    data[i] = rover;
+                    //data[i] = rover;
+                    data.Insert(i, rover);
                     Rover.saveRoverData(data);
                     ////movement of rover
                     rover = rover.validateRoverMovementCommand(rover, plateau);
